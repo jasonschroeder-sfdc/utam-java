@@ -45,13 +45,13 @@ public abstract class ComposeMethodStatement {
   ComposeMethodStatement(
       Operand operand,
       Operation operation,
-      TypeProvider returnType,
+      TypeProvider declaredReturnType,
       Matcher matcher,
       StatementContext statementContext) {
-    this.actionReturnType = returnType;
+    this.actionReturnType = declaredReturnType;
     this.matcherOperandType = matcher != null ? matcher.matcherType.getOperandType() : null;
     this.statementContext = statementContext;
-    this.statementReturns = getReturn(matcher, returnType);
+    this.statementReturns = getReturn(matcher, declaredReturnType);
     setImports(operation, operand);
     setParameters(operation, operand, matcher);
     this.operation = operation;
@@ -66,9 +66,11 @@ public abstract class ComposeMethodStatement {
       codeLines.add(getMethodCallString(true));
       String matcherCode = matcher.matcherType.getCode(statementVariable, matcher.matcherParameters);
       String matcherVariable = statementContext.getMatcherVariableName();
-      codeLines.add(String.format("Boolean %s = %s", matcherVariable, matcherCode));
       if (statementContext.isLastStatement() || statementContext.isLastPredicateStatement()) {
+        codeLines.add(String.format("Boolean %s = %s", matcherVariable, matcherCode));
         codeLines.add("return " + matcherVariable);
+      } else {
+        codeLines.add(matcherCode);
       }
     } else {
       boolean isUseVariable = isUseVariable();
@@ -85,6 +87,11 @@ public abstract class ComposeMethodStatement {
 
   private boolean isUseVariable() {
     if(statementContext.isReturnSelf()) {
+      return false;
+    }
+    if(!statementContext.isLastStatement()
+        && !statementContext.isLastPredicateStatement()
+        && !statementContext.isUsedAsChain()) {
       return false;
     }
     return !actionReturnType.isSameType(VOID);
@@ -113,18 +120,17 @@ public abstract class ComposeMethodStatement {
     return this.statementReturns.isSameType(VOID);
   }
 
-  private TypeProvider getReturn(Matcher matcher, TypeProvider returnType) {
-    // enforce boolean for last predicate statement
-    if (statementContext.isLastPredicateStatement() && MethodContext.isNullOrVoid(returnType)) {
-      return PrimitiveType.BOOLEAN;
-    }
+  private TypeProvider getReturn(Matcher matcher, TypeProvider declaredReturnType) {
     if (matcher != null) {
       return PrimitiveType.BOOLEAN;
     }
-    if (returnType == null) {
+    if (statementContext.isLastPredicateStatement() && MethodContext.isNullOrVoid(declaredReturnType)) {
       return VOID;
     }
-    return returnType;
+    if (declaredReturnType == null) {
+      return VOID;
+    }
+    return declaredReturnType;
   }
 
   private void setImports(Operation operation, Operand operand) {

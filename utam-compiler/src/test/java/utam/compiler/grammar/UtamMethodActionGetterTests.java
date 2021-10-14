@@ -186,7 +186,7 @@ public class UtamMethodActionGetterTests {
     MethodInfo expected = new MethodInfo(methodName, "Boolean");
     expected.addParameter(new MethodParameterInfo("filterArg"));
     expected.addImpliedImportedTypes(CUSTOM_TYPE_IMPORT);
-    expected.addCodeLine("Foo statement0 = this.getFindFirstElement(filterArg)");
+    expected.addCodeLine("this.getFindFirstElement(filterArg)");
     expected.addCodeLine("Object statement1 = this.getFindFirstElement(filterArg)");
     expected.addCodeLine("Boolean matcher1 = statement1 != null");
     expected.addCodeLine("return matcher1");
@@ -201,7 +201,7 @@ public class UtamMethodActionGetterTests {
     expected.addParameter(new MethodParameterInfo("filterArg"));
     expected.addImportedTypes(CUSTOM_TYPE_IMPORT, LIST_IMPORT);
     expected.addImpliedImportedTypes(CUSTOM_TYPE_IMPORT, LIST_IMPORT);
-    expected.addCodeLine("List<Foo> statement0 = this.getFindAllElement(filterArg)");
+    expected.addCodeLine("this.getFindAllElement(filterArg)");
     expected.addCodeLine("List<Foo> statement1 = this.getFindAllElement(filterArg)");
     expected.addCodeLine("return statement1");
     PageObjectValidationTestHelper.validateMethod(actualMethod, expected);

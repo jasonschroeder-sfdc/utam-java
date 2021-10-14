@@ -23,6 +23,8 @@ public class ReturnType {
   static final String ERR_UNSUPPORTED_RETURN_TYPE = "%s: invalid return type '%s'";
   static final String ERR_RETURN_ALL_REDUNDANT =
       "%s: 'returnAll' property can't be set without setting return type";
+  static final String ERR_RETURN_ALL_REDUNDANT_FOR_SELF =
+      "%s: 'returnAll' property can't be set for 'returnType' self";
 
   final String validationContextStr;
   private final boolean isReturnList;
@@ -43,6 +45,10 @@ public class ReturnType {
     }
     this.isReturnList = Boolean.TRUE.equals(isReturnList);
     this.isReturnSelf = isReturnTypeSet && typeNode.isTextual() && "self".equals(typeNode.asText());
+    if (isReturnList != null && isReturnSelf) {
+      throw new UtamCompilationError(
+          String.format(ERR_RETURN_ALL_REDUNDANT_FOR_SELF, validationContextStr));
+    }
   }
 
   public ReturnType(String methodName) {

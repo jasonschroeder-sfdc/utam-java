@@ -13,12 +13,9 @@
       "compose": [
         {
           "element": "test",
-          "apply": "getText"
-        },
-        {
-          "element": "test",
-          "apply": "getClass",
-          "returnType" : "self"
+          "apply": "getValue",
+          "returnType" : "self",
+          "returnAll": true
         }
       ]
     }

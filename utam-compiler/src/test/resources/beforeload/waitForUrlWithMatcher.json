@@ -24,9 +24,8 @@
       ]
     },
     {
-      "element" : "root",
-      "apply" : "getText",
-      "returnType" : "string"
+      "element" : "document",
+      "apply" : "waitForDocumentReady"
     }
   ]
 }

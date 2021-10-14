@@ -28,8 +28,7 @@
                 }
               ]
             }
-          ],
-          "returnType" : "utam-test/pageObjects/custom"
+          ]
         },
         {
           "chain" : true,

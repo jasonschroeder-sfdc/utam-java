@@ -21,6 +21,7 @@ import utam.compiler.UtamCompilationError;
 import utam.compiler.helpers.ActionType;
 import utam.compiler.helpers.MatcherType;
 import utam.compiler.helpers.MethodContext;
+import utam.compiler.helpers.PrimitiveType;
 import utam.compiler.helpers.ReturnType;
 import utam.compiler.helpers.StatementContext;
 import utam.compiler.helpers.StatementContext.StatementType;
@@ -105,11 +106,12 @@ public abstract class UtamMethodAction {
 
   final void checkDefinedReturnType(TypeProvider expectedType, TypeProvider declaredType,
       String methodName) {
-    if (!expectedType.isSameType(declaredType)) {
+    TypeProvider adjustedExpectedType = matcher != null ? PrimitiveType.BOOLEAN : expectedType;
+    if (!adjustedExpectedType.isSameType(declaredType)) {
       throw new UtamCompilationError(String
           .format(ERR_INCORRECT_RETURN_TYPE,
               methodName,
-              expectedType.getSimpleName(),
+              adjustedExpectedType.getSimpleName(),
               declaredType.getSimpleName()));
     }
   }

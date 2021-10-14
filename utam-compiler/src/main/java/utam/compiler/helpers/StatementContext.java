@@ -27,10 +27,6 @@ import utam.core.declarative.representation.TypeProvider;
  */
 public class StatementContext {
 
-  // changing this affects unit tests results!!!
-  private static final String STATEMENT_VARIABLE_PREFIX = "statement";
-  private static final String MATCHER_VARIABLE_PREFIX = "matcher";
-
   private final StatementType statementType;
   private final ReturnType declaredStatementReturn;
   // accumulates statement args
@@ -38,25 +34,28 @@ public class StatementContext {
   // statement index in the compose method, starting from 0
   private final int statementIndex;
   private final TypeProvider previousStatementReturn;
+  private final boolean isUsedAsChain;
 
   public StatementContext(
       TypeProvider previousStatementReturn,
       int statementIndex,
+      boolean isUsedAsChain,
       StatementType statementType,
       ReturnType declaredStatementReturn) {
     this.statementIndex = statementIndex;
     this.statementType = statementType;
     this.declaredStatementReturn = declaredStatementReturn;
     this.previousStatementReturn = previousStatementReturn;
+    this.isUsedAsChain = isUsedAsChain;
   }
 
   // for testing
   StatementContext() {
-    this(null, 0, REGULAR_STATEMENT, new ReturnType("dummy"));
+    this(null, 0, false, REGULAR_STATEMENT, new ReturnType("dummy"));
   }
 
   public Operand getChainOperand() {
-    String operandString = STATEMENT_VARIABLE_PREFIX + (statementIndex - 1);
+    String operandString = getVariableName(statementIndex - 1);
     boolean isList = previousStatementReturn instanceof ListOf;
     return new ConstOperand(operandString, isList);
   }
@@ -65,16 +64,24 @@ public class StatementContext {
     return previousStatementReturn;
   }
 
-  public String getVariableName() {
+  private String getVariableName(int statementIndex) {
+    // changing this affects unit tests results!!!
+    final String STATEMENT_VARIABLE_PREFIX = "statement";
     return getPredicateVariablePrefix() + STATEMENT_VARIABLE_PREFIX + statementIndex;
   }
 
+  public String getVariableName() {
+    return getVariableName(statementIndex);
+  }
+
   public String getMatcherVariableName() {
+    // changing this affects unit tests results!!!
+    final String MATCHER_VARIABLE_PREFIX = "matcher";
     return getPredicateVariablePrefix() + MATCHER_VARIABLE_PREFIX + statementIndex;
   }
 
   private String getPredicateVariablePrefix() {
-    return isInsidePredicate()?"p" : "";
+    return isInsidePredicate() ? "p" : "";
   }
 
   public boolean isInsidePredicate() {
@@ -130,6 +137,10 @@ public class StatementContext {
   public boolean isFlatMap() {
     return previousStatementReturn instanceof ListOf
         && this.declaredStatementReturn.isReturnAllSet();
+  }
+
+  public boolean isUsedAsChain() {
+    return isUsedAsChain;
   }
 
   public enum StatementType {

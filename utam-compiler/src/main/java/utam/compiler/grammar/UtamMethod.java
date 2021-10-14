@@ -118,6 +118,7 @@ class UtamMethod {
       StatementContext statementContext = new StatementContext(
           previousStatementReturn,
           i,
+          isUsedAsChain(compose, i),
           statementDeclaration.getStatementType(i, compose.length),
           statementDeclaration.getDeclaredReturnType(name));
       ComposeMethodStatement statement = statementDeclaration.getComposeAction(context, methodContext, statementContext);
@@ -125,5 +126,12 @@ class UtamMethod {
       statements.add(statement);
     }
     return statements;
+  }
+
+  static boolean isUsedAsChain(UtamMethodAction[] compose, int index) {
+    if(index == compose.length -1) {
+      return false;
+    }
+    return compose[index + 1].isChain;
   }
 }

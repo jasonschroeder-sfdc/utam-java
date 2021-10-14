@@ -47,10 +47,8 @@ class UtamMethodActionWaitFor extends UtamMethodAction {
       @JsonProperty(value = "apply") String apply,
       @JsonProperty(value = "args") UtamArgument[] args,
       @JsonProperty(value = "matcher") UtamMatcher matcher,
-      @JsonProperty(value = "returnType") JsonNode returnType,
-      @JsonProperty(value = "returnAll") Boolean isReturnList,
       @JsonProperty(value = "chain", defaultValue = "false") boolean isChain) {
-    super(elementName, apply, null, args, matcher, returnType, isReturnList, isChain);
+    super(elementName, apply, null, args, matcher, null, null, isChain);
   }
 
   @Override
@@ -82,9 +80,7 @@ class UtamMethodActionWaitFor extends UtamMethodAction {
             defaultReturnType);
     ActionType action = new CustomActionType(apply, declaredStatementReturnType);
     List<ComposeMethodStatement> predicate = args[0].getPredicate(context, methodContext);
-    TypeProvider operationReturnType = statementContext
-        .getDeclaredReturnOrDefault(context, methodContext.getDeclaredReturnType(),
-            declaredStatementReturnType);
+    TypeProvider operationReturnType = predicate.get(predicate.size() - 1).getReturnType();
     Operation operation = new OperationWithPredicate(action, operationReturnType, predicate);
     checkMatcher(operationReturnType, validationContextStr);
 

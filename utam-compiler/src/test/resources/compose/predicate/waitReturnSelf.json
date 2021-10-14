@@ -5,7 +5,6 @@
       "compose": [
         {
           "apply": "waitFor",
-          "returnType" : "self",
           "args": [
             {
               "type" : "function",

@@ -1,7 +1,6 @@
 {
   "beforeLoad" : [
     {
-      "element" : "document",
       "apply" : "waitFor",
       "args" : [
         {
@@ -9,7 +8,8 @@
           "predicate" : [
             {
               "element" : "root",
-              "apply" : "isPresent"
+              "apply" : "isPresent",
+              "returnType" : "self"
             }
           ]
         }

@@ -46,16 +46,17 @@ public class UtamMethodActionWaitForTests {
   public void testWaitForCustomElement() {
     TranslationContext context = getContext("waitForCustom");
     PageObjectMethod method = context.getMethod(methodName);
-    MethodInfo methodInfo = new MethodInfo(methodName);
+    MethodInfo methodInfo = new MethodInfo(methodName, "Boolean");
     methodInfo.addParameter(new MethodParameterInfo("selectorArg", "LocatorBy"));
     methodInfo.addParameter(new MethodParameterInfo("matcherArg", "String"));
-    methodInfo.addCodeLine("this.waitFor(() -> {\n"
+    methodInfo.addCodeLine("Boolean statement0 = this.waitFor(() -> {\n"
         + "Custom pcustom0 = this.getCustomElement();\n"
         + "if (pcustom0 == null) { return false; }\n"
         + "String pstatement0 = pcustom0.returnsString(selectorArg);\n"
         + "Boolean pmatcher0 = (pstatement0!= null && pstatement0.contains(matcherArg));\n"
         + "return pmatcher0;\n"
         + "})");
+    methodInfo.addCodeLine("return statement0");
     PageObjectValidationTestHelper.validateMethod(method, methodInfo);
   }
 
@@ -93,12 +94,12 @@ public class UtamMethodActionWaitForTests {
     TranslationContext context = getContext("waitReturnSelf");
     PageObjectMethod method = context.getMethod(methodName);
     MethodInfo methodInfo = new MethodInfo(methodName, "Test");
-    methodInfo.addCodeLine("this.waitFor(() -> {\n"
+    methodInfo.addCodeLine("Test statement0 = this.waitFor(() -> {\n"
         + "RootElement proot0 = this.getRootElement();\n"
         + "proot0.focus();\n"
         + "return this;\n"
         + "})");
-    methodInfo.addCodeLine("return this");
+    methodInfo.addCodeLine("return statement0");
     PageObjectValidationTestHelper.validateMethod(method, methodInfo);
   }
 
@@ -122,7 +123,7 @@ public class UtamMethodActionWaitForTests {
     MethodInfo methodInfo = new MethodInfo(methodName, "Custom");
     methodInfo.addCodeLine("Custom statement0 = this.waitFor(() -> {\n"
         + "Custom pstatement0 = this.getCustomElement();\n"
-        + "Custom pstatement1 = statement0.method1();\n"
+        + "Custom pstatement1 = pstatement0.method1();\n"
         + "return pstatement1;\n"
         + "})");
     methodInfo.addCodeLine("Custom statement1 = statement0.method2()");

@@ -13,8 +13,6 @@
       "name": "test",
       "compose": [
         {
-          "returnType" : "string",
-          "returnAll": true,
           "element": "self",
           "apply": "waitFor",
           "args": [
@@ -23,7 +21,9 @@
               "predicate": [
                 {
                   "element" : "list",
-                  "apply" : "getText"
+                  "apply" : "getText",
+                  "returnType" : "string",
+                  "returnAll": true
                 }
               ]
             }

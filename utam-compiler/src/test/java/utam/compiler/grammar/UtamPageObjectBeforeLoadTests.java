@@ -40,57 +40,69 @@ public class UtamPageObjectBeforeLoadTests {
   }
 
   @Test
-  public void testBeforeLoad() {
+  public void testBeforeLoadApplyBasicActionsToRootReturnsSelf() {
     MethodInfo methodInfo = getExpectedMethod();
+    TranslationContext context = getContext("rootApplyReturnSelf");
+    PageObjectMethod method = context.getMethod(METHOD_NAME);
+    assertThat(method.getDeclaration().getCodeLine(), is("Object load()"));
     methodInfo.addCodeLine("RootElement root0 = this.getRootElement()");
-    methodInfo.addCodeLine("Boolean statement0 = root0.isPresent()");
+    methodInfo.addCodeLine("root0.isPresent()");
     methodInfo.addCodeLine("root0.getText()");
     methodInfo.addCodeLine("return this");
-    TranslationContext context = getContext("rootApply");
-    PageObjectMethod method = context.getMethod(METHOD_NAME);
     PageObjectValidationTestHelper.validateMethod(method, methodInfo);
   }
 
   @Test
-  public void testBeforeLoadWaitDocumentUrl() {
+  public void testBeforeLoadApplyBasicActionsWithMatcher() {
+    MethodInfo methodInfo = getExpectedMethod();
+    TranslationContext context = getContext("rootApplyWithMatcher");
+    PageObjectMethod method = context.getMethod(METHOD_NAME);
+    assertThat(method.getDeclaration().getCodeLine(), is("Object load()"));
+    methodInfo.addCodeLine("RootElement root0 = this.getRootElement()");
+    methodInfo.addCodeLine("String statement0 = root0.getText()");
+    methodInfo.addCodeLine("Boolean matcher0 = \"text\".equals(statement0)");
+    methodInfo.addCodeLine("return matcher0");
+    PageObjectValidationTestHelper.validateMethod(method, methodInfo);
+  }
+
+  @Test
+  public void testBeforeLoadWaitDocumentUrlWithMatcher() {
+    TranslationContext context = getContext("waitForUrlWithMatcher");
     MethodInfo methodInfo = getExpectedMethod();
     methodInfo.addCodeLine("this.waitFor(() -> {\n"
         + "String pstatement0 = this.getDocument().getUrl();\n"
         + "Boolean pmatcher0 = (pstatement0!= null && pstatement0.contains(\"home\"));\n"
         + "return pmatcher0;\n"
         + "})");
-    methodInfo.addCodeLine("RootElement root1 = this.getRootElement()");
-    methodInfo.addCodeLine("String statement1 = root1.getText()");
-    methodInfo.addCodeLine("return statement1");
-    TranslationContext context = getContext("chainWaitFor");
+    methodInfo.addCodeLine("this.getDocument().waitForDocumentReady()");
+    methodInfo.addCodeLine("return this");
     PageObjectMethod method = context.getMethod(METHOD_NAME);
-    assertThat(method.getDeclaration().getCodeLine(), is("Object load()"));
     PageObjectValidationTestHelper.validateMethod(method, methodInfo);
   }
 
   @Test
   public void testBeforeLoadWait() {
+    TranslationContext context = getContext("waitForRootPresence");
     MethodInfo methodInfo = getExpectedMethod();
-    methodInfo.addCodeLine("this.waitFor(() -> {\n"
+    methodInfo.addCodeLine("Boolean statement0 = this.waitFor(() -> {\n"
         + "RootElement proot0 = this.getRootElement();\n"
         + "Boolean pstatement0 = proot0.isPresent();\n"
         + "return pstatement0;\n"
         + "})");
-    methodInfo.addCodeLine("return this");
-    TranslationContext context = getContext("rootWaitFor");
+    methodInfo.addCodeLine("return statement0");
     PageObjectValidationTestHelper.validateMethod(context.getMethod(METHOD_NAME), methodInfo);
   }
 
   @Test
-  public void testBeforeLoadWaitNoElement() {
+  public void testWaitForRootPresenceReturnsSelf() {
+    TranslationContext context = getContext("waitForRootReturnsSelf");
     MethodInfo methodInfo = getExpectedMethod();
-    methodInfo.addCodeLine("this.waitFor(() -> {\n"
+    methodInfo.addCodeLine("Test statement0 = this.waitFor(() -> {\n"
         + "RootElement proot0 = this.getRootElement();\n"
-        + "Boolean pstatement0 = proot0.isPresent();\n"
-        + "return pstatement0;\n"
+        + "proot0.isPresent();\n"
+        + "return this;\n"
         + "})");
-    methodInfo.addCodeLine("return this");
-    TranslationContext context = getContext("rootWaitForNoElement");
+    methodInfo.addCodeLine("return statement0");
     PageObjectValidationTestHelper.validateMethod(context.getMethod(METHOD_NAME), methodInfo);
   }
 

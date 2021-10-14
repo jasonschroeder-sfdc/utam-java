@@ -100,7 +100,7 @@ public class UtamMethodActionApplyTests {
     PageObjectMethod actualMethod = context.getMethod(methodName);
     MethodInfo methodInfo = new MethodInfo(methodName, "Test");
     methodInfo.addCodeLine("TestElement test0 = this.getTestElement()");
-    methodInfo.addCodeLine("String statement0 = test0.getText()");
+    methodInfo.addCodeLine("test0.getText()");
     methodInfo.addCodeLine("test0.getClassAttribute()");
     methodInfo.addCodeLine("return this");
     PageObjectValidationTestHelper.validateMethod(actualMethod, methodInfo);
@@ -177,8 +177,7 @@ public class UtamMethodActionApplyTests {
     MethodInfo expected = new MethodInfo(methodName, "Integer");
     expected.addCodeLine("List<BasicElement> basic0 = this.getBasicElement()");
     expected.addCodeLine("if (basic0 == null) { return null; }");
-    expected.addCodeLine(
-        "List<String> statement0 = basic0.stream().map(element -> element.getText()).collect(Collectors.toList())");
+    expected.addCodeLine("basic0.stream().map(element -> element.getText()).collect(Collectors.toList())");
     expected.addCodeLine("Integer statement1 = basic0.size()");
     expected.addCodeLine("return statement1");
     PageObjectValidationTestHelper.validateMethod(actualMethod, expected);

@@ -10,6 +10,7 @@ package utam.compiler.grammar;
 import static utam.compiler.grammar.UtamArgumentDeserializer.SUPPORTED_NON_LITERAL_TYPES;
 import static utam.compiler.grammar.UtamArgumentDeserializer.getErrorMessage;
 import static utam.compiler.grammar.UtamArgumentDeserializer.getUnsupportedTypeErr;
+import static utam.compiler.grammar.UtamMethod.isUsedAsChain;
 import static utam.compiler.helpers.ParameterUtils.getParametersValuesString;
 import static utam.compiler.helpers.PrimitiveType.BOOLEAN;
 import static utam.compiler.helpers.PrimitiveType.NUMBER;
@@ -231,6 +232,7 @@ public abstract class UtamArgument {
         StatementContext statementContext = new StatementContext(
             previousStatementReturn,
             i,
+            isUsedAsChain(conditions, i),
             i == conditions.length - 1 ? PREDICATE_LAST_STATEMENT : PREDICATE_STATEMENT,
             conditions[i].getDeclaredReturnType(methodContext.getName()));
         ComposeMethodStatement statement = conditions[i]

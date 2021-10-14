@@ -4,7 +4,6 @@
       "name": "test",
       "compose": [
         {
-          "returnType" : "boolean",
           "element": "root",
           "apply": "waitFor",
           "args": [
@@ -13,6 +12,7 @@
               "type" : "function",
               "predicate": [
                 {
+                  "returnType" : "boolean",
                   "element" : "root",
                   "apply" : "getText",
                   "matcher" : {
