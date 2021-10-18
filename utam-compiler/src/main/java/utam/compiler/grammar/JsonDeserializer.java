@@ -156,6 +156,7 @@ public final class JsonDeserializer {
     private final UtamPageObject utamPageObject;
     private final TypeProvider implementedType;
 
+
     Interface(TranslationContext context, UtamPageObject utamPageObject) {
       this.context = context;
       this.utamPageObject = utamPageObject;
@@ -197,6 +198,11 @@ public final class JsonDeserializer {
     @Override
     public String getComments() {
       return "";
+    }
+
+    @Override
+    public List<UnionType> getUnionTypes() {
+      return context.getUnionTypes();
     }
   }
 
@@ -272,6 +278,11 @@ public final class JsonDeserializer {
           .map(method -> method.getDeclaration().getReturnType())
           .map(TypeUtilities::getElementType)
           .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<UnionType> getUnionTypes() {
+      return context.getUnionTypes();
     }
   }
 }

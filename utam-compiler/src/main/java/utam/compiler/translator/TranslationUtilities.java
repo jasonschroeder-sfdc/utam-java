@@ -124,7 +124,8 @@ public class TranslationUtilities {
     if (string.isEmpty()) {
       return "";
     }
-    if (string.endsWith("{") || string.endsWith("}")) {
+    String trimmedString = string.stripTrailing();
+    if (trimmedString.endsWith("{") || trimmedString.endsWith("}")) {
       return string;
     }
     return string + ";";

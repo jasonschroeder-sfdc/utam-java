@@ -8,6 +8,7 @@
 package utam.core.declarative.representation;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * representation of the interface to generate
@@ -59,4 +60,6 @@ public interface PageObjectInterface {
    * @return string
    */
   String getComments();
+
+  List<UnionType> getUnionTypes();
 }

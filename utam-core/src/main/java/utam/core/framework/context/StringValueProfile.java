@@ -28,7 +28,6 @@ public class StringValueProfile implements Profile {
       "profile name must not be null or the empty string";
   private static final String ERR_VALUES_REQUIRED =
       "profile value must not be null or the empty string";
-  private static final String PROFILE_CONFIG_PATTERN = "%s_%s_config";
   private final String name;
   private final String value;
 
@@ -45,17 +44,6 @@ public class StringValueProfile implements Profile {
     this.value = value;
   }
 
-  private static String getKey(Profile profile) {
-    return String.format(PROFILE_CONFIG_PATTERN, profile.getName(), profile.getValue());
-  }
-
-  static String getProfileConfigName(Profile profile, String moduleName) {
-    if (moduleName == null || moduleName.isEmpty()) {
-      return getKey(profile);
-    }
-    return moduleName + "_" + getKey(profile);
-  }
-
   @Override
   public String getName() {
     return name;
@@ -67,19 +55,14 @@ public class StringValueProfile implements Profile {
   }
 
   @Override
-  public String getConfigName(String moduleName) {
-    return getProfileConfigName(this, moduleName);
-  }
-
-  @Override
   public int hashCode() {
-    return getKey(this).hashCode();
+    return getKey().hashCode();
   }
 
   @Override //without this can't use Profile as a key in map inside Runner
   public boolean equals(Object obj) {
     if (obj instanceof StringValueProfile) {
-      return getKey((StringValueProfile) obj).equals(getKey(this));
+      return ((StringValueProfile) obj).getKey().equals(this.getKey());
     }
     return false;
   }

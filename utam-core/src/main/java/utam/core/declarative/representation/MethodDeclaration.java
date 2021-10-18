@@ -27,5 +27,7 @@ public interface MethodDeclaration {
 
   String getCodeLine();
 
-  String getComments();
+  default String getComments() {
+    return "";
+  }
 }

@@ -107,7 +107,7 @@ class MethodDeclarationImpl implements MethodDeclaration {
     return comments;
   }
 
-  private static String getParametersDeclarationString(List<MethodParameter> parameters) {
+  static String getParametersDeclarationString(List<MethodParameter> parameters) {
     return parameters.stream()
         .map(MethodParameter::getDeclaration)
         .filter(str -> !str.isEmpty()) // hardcoded values passed as empty string

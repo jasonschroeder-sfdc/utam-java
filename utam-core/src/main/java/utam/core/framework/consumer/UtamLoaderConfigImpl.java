@@ -27,6 +27,7 @@ import utam.core.framework.consumer.JsonLoaderConfig.Module;
 import utam.core.framework.context.DefaultProfileContext;
 import utam.core.framework.context.Profile;
 import utam.core.framework.context.ProfileContext;
+import utam.core.framework.context.StringValueProfile;
 
 /**
  * Loader config is used to set

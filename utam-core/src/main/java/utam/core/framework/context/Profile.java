@@ -36,7 +36,16 @@ public interface Profile {
    * @param moduleName name of the module to distinguish properties
    * @return name of the config to further use for UTAM Loader Configuration
    */
-  String getConfigName(String moduleName);
+  default String getConfigName(String moduleName) {
+    if (moduleName == null || moduleName.isEmpty()) {
+      return getKey();
+    }
+    return moduleName + "_" + getKey();
+  }
+
+  default String getKey() {
+    return String.format("%s_%s_config", getName(), getValue());
+  }
 
   /**
    * default profile is used to build default dependencies config

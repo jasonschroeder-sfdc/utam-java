@@ -98,4 +98,6 @@ public interface PageObjectClass {
    * @return list of types
    */
   List<TypeProvider> getDeclaredElementTypes(boolean isPublicElements);
+
+  List<UnionType> getUnionTypes();
 }

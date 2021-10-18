@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static utam.compiler.representation.UnionTypeProvider.getTransformedImplType;
 import static utam.compiler.translator.TranslationUtilities.*;
 
 /**
@@ -100,6 +101,9 @@ public final class ClassSerializer {
     addPublicElementClassDeclarations(out);
     addPrivateElementClassDeclarations(out);
     out.add(NEW_LINE);
+    source.getUnionTypes().forEach(unionType ->
+        out.addAll(addUnionTypeDeclarations(unionType))
+    );
     out.add("}");
     return applyJavaFormatter(out);
   }
@@ -134,6 +138,19 @@ public final class ClassSerializer {
         .forEach(out::add);
   }
 
+  private List<String> addUnionTypeDeclarations(UnionType type) {
+    List<String> declarations = new ArrayList<>();
+    String interfaceType = type.getSimpleName();
+    type.getImplementedTypes().forEach(impl -> {
+      String transformedName = getTransformedImplType(impl).getSimpleName();
+      String originalName = impl.getSimpleName();
+      String declaration = String.format("public static class %s extends %s implements %s {}", transformedName, originalName, interfaceType);
+      declarations.add(declaration);
+      declarations.add(NEW_LINE);
+    });
+    return declarations;
+  }
+
   private boolean isUsedMethod(PageObjectMethod method) {
     return method.isPublic() ||
         translationContext.getUsedPrivateMethods().contains(method.getDeclaration().getName());
@@ -141,7 +158,7 @@ public final class ClassSerializer {
 
   private String getDeclaration() {
     return String.format(
-        "public final class %s extends %s implements %s {",
+        "public class %s extends %s implements %s {",
         source.getClassType().getSimpleName(),
         source.getBaseClassType().getSimpleName(),
         source.getImplementedType().getInterfaceType().getSimpleName());
@@ -171,6 +188,12 @@ public final class ClassSerializer {
     source
         .getMethods()
         .forEach(m -> m.getClassImports().forEach(importStr -> res.addAll(getImportStatements(importStr))));
+    // add imports for union types classes
+    source
+        .getUnionTypes()
+        .stream()
+        .flatMap(unionType -> unionType.getImplementedTypes().stream())
+        .forEach(type -> res.addAll(getImportStatements(type)));
     return res;
   }
 

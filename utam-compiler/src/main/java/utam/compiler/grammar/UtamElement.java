@@ -79,6 +79,7 @@ public final class UtamElement {
   @JsonCreator
   UtamElement(
       @JsonProperty(value = "type", defaultValue = "[]") JsonNode type, // optional for actionable
+      @JsonProperty(value = "oneOf") JsonNode oneOf,
       @JsonProperty(value = "name", required = true) String name,
       @JsonProperty(value = "public") Boolean isPublic,
       @JsonProperty(value = "nullable") Boolean isNullable,
@@ -96,6 +97,20 @@ public final class UtamElement {
     this.filter = filter;
     this.isNullable = isNullable;
     this.isExternal = isExternal;
+    this.traversalAbstraction = UtamElementOneOf.buildTraversal(oneOf, name);
+  }
+
+  UtamElement(
+      @JsonProperty(value = "type", defaultValue = "[]") JsonNode type, // optional for actionable
+      @JsonProperty(value = "name", required = true) String name,
+      @JsonProperty(value = "public") Boolean isPublic,
+      @JsonProperty(value = "nullable") Boolean isNullable,
+      @JsonProperty(value = "external") Boolean isExternal, // to support compatibility
+      @JsonProperty(value = "selector") UtamSelector selector,
+      @JsonProperty(value = "filter") UtamElementFilter filter,
+      @JsonProperty("shadow") UtamShadowElement shadow,
+      @JsonProperty("elements") UtamElement[] elements) {
+    this(type, null, name, isPublic, isNullable, isExternal, selector, filter, shadow, elements);
   }
 
   private String[] processTypeNode(JsonNode typeNode) {

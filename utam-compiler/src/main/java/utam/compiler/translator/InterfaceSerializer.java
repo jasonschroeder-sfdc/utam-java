@@ -14,6 +14,7 @@ import utam.core.declarative.representation.TypeProvider;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import utam.core.declarative.representation.UnionType;
 
 import static utam.compiler.translator.TranslationUtilities.*;
 
@@ -64,6 +65,12 @@ public final class InterfaceSerializer {
           out.add(getNestedInterfaceDeclaration(nested));
         }
     );
+    source.getUnionTypes().forEach(
+        nested -> {
+          out.add(NEW_LINE);
+          out.add(getUnionTypeDeclaration(nested));
+        }
+    );
     out.add("}");
     out.removeIf(String::isEmpty);
     return applyJavaFormatter(out);
@@ -73,6 +80,14 @@ public final class InterfaceSerializer {
     return String.format("interface %s extends %s {}",
         type.getSimpleName(),
         ((BasicElementUnionType)type).getBasicInterfaces().stream()
+            .map(TypeProvider::getSimpleName)
+            .collect(Collectors.joining(", ")));
+  }
+
+  private String getUnionTypeDeclaration(UnionType type) {
+    return String.format("interface %s extends %s {}",
+        type.getSimpleName(),
+        type.getExtendedTypes().stream()
             .map(TypeProvider::getSimpleName)
             .collect(Collectors.joining(", ")));
   }
@@ -89,6 +104,12 @@ public final class InterfaceSerializer {
     declaredApi.stream()
         .flatMap(method -> method.getImports().stream())
         .forEach(importStr -> res.addAll(getImportStatements(importStr)));
+    // add imports for union types interfaces
+    source
+        .getUnionTypes()
+        .stream()
+        .flatMap(unionType -> unionType.getExtendedTypes().stream())
+        .forEach(type -> res.addAll(getImportStatements(type)));
     return res;
   }
 }
