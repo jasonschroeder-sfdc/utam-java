@@ -28,10 +28,12 @@ import utam.core.framework.consumer.PageObjectContextImpl;
 class UtamElementOneOf {
 
   final String elementName;
+  final UtamSelector selector;
   final Map<String, OneOfCandidates> values = new HashMap<>();
 
-  UtamElementOneOf(String elementName, JsonNode oneOf) {
+  UtamElementOneOf(String elementName, JsonNode oneOf, UtamSelector selector) {
     this.elementName = elementName;
+    this.selector = selector;
     oneOf.fieldNames().forEachRemaining(key -> {
       JsonNode element = oneOf.get(key);
       try {
@@ -49,24 +51,29 @@ class UtamElementOneOf {
         + elementName.substring(1);
   }
 
-  static UtamElement.Traversal buildTraversal(JsonNode oneOf, String elementName) {
+  static UtamElement.Traversal buildTraversal(JsonNode oneOf, String elementName, UtamSelector selector) {
     if (oneOf == null || !oneOf.isObject()) {
       return null;
     }
-    return new OneOfTraversal(new UtamElementOneOf(elementName, oneOf));
+    return new OneOfTraversal(new UtamElementOneOf(elementName, oneOf, selector));
   }
 
   static class OneOfCandidates {
 
-    private final UtamSelector selector;
+    private final UtamSelector elementSelector;
     private final String type;
 
     @JsonCreator
     OneOfCandidates(
         @JsonProperty(value = "type", required = true) String type,
-        @JsonProperty(value = "selector", required = true) UtamSelector selector) {
+        @JsonProperty(value = "selector") UtamSelector selector) {
       this.type = type;
-      this.selector = selector;
+      this.elementSelector = selector;
+    }
+
+    private LocatorCodeGeneration getSelector(UtamElementOneOf elementOneOf, TranslationContext context) {
+      UtamSelector selector = this.elementSelector == null? elementOneOf.selector : this.elementSelector;
+      return selector.getCodeGenerationHelper(context);
     }
 
     private TypeProvider getElementGetterReturnType(TranslationContext context) {
@@ -82,13 +89,14 @@ class UtamElementOneOf {
     }
 
     ElementContext getElementContext(
+        UtamElementOneOf elementOneOf,
         TranslationContext translationContext,
         ElementContext scopeElement,
         boolean isExpandScopeShadowRoot,
         String key,
         String elementName) {
       String name = String.format("%s_%s", elementName, key);
-      LocatorCodeGeneration selectorContext = selector.getCodeGenerationHelper(translationContext);
+      LocatorCodeGeneration selectorContext = getSelector(elementOneOf, translationContext);
       TypeProvider elementType = getElementGetterReturnType(translationContext);
       ElementContext elementContext = new ElementContext.Custom(
           scopeElement,
@@ -131,8 +139,13 @@ class UtamElementOneOf {
             String key = entry.getKey();
             OneOfCandidates value = entry.getValue();
             ElementContext elementContext =
-                value.getElementContext(context, scopeElement, isExpandScopeShadowRoot, key,
-                        utamElement.elementName);
+                value.getElementContext(
+                    utamElement,
+                    context,
+                    scopeElement,
+                    isExpandScopeShadowRoot,
+                    key,
+                    utamElement.elementName);
             elements.put(key, elementContext);
             unionTypes.add(value.getUnionType(context));
           });

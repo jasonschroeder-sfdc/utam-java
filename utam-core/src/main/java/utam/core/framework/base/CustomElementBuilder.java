@@ -37,19 +37,24 @@ public class CustomElementBuilder {
 
   final PageObjectsFactory factory;
   final ElementLocation root;
+  final boolean isNullable;
 
   CustomElementBuilder(PageObjectsFactory factory,
       ElementLocation scope,
       Locator rootLocator,
       FindContext finderContext) {
+    this(factory, scope != null ? scope.scope(rootLocator, finderContext)
+        : new ElementLocationChain(rootLocator, finderContext), finderContext.isNullable());
+  }
+
+  CustomElementBuilder(PageObjectsFactory factory, ElementLocation root, boolean isNullable) {
     this.factory = factory;
-    this.root = scope != null ? scope.scope(rootLocator, finderContext)
-        : new ElementLocationChain(rootLocator, finderContext);
+    this.root = root;
+    this.isNullable = isNullable;
   }
 
   CustomElementBuilder(PageObjectsFactory factory, ElementLocation root) {
-    this.factory = factory;
-    this.root = root;
+    this(factory, root, false);
   }
 
   static String getFilteredElementNotFoundErr(Class type) {
@@ -80,9 +85,10 @@ public class CustomElementBuilder {
     factory.bootstrap(poInstance, root);
     BasePageObject pageObject = (BasePageObject) poInstance;
     // if nothing is found and element is nullable - return null
-    if (pageObject.getElement().isNull()) {
+    if (isNullable && pageObject.getElement().isNull()) {
       return null;
     }
+    pageObject.load();
     return poInstance;
   }
 
@@ -107,7 +113,7 @@ public class CustomElementBuilder {
     List<Element> found = factory.findElements(root);
 
     for (Element el : found) {
-      T instance = new CustomElementBuilder(factory, new ElementLocationChain(el)).build(type);
+      T instance = new CustomElementBuilder(factory, new ElementLocationChain(el), isNullable).build(type);
       if (filter.test(instance)) {
         return instance;
       }
@@ -135,7 +141,7 @@ public class CustomElementBuilder {
       return null;
     }
     return found.stream()
-        .map(el -> new CustomElementBuilder(factory, new ElementLocationChain(el)).build(type))
+        .map(el -> new CustomElementBuilder(factory, new ElementLocationChain(el), isNullable).build(type))
         .collect(Collectors.toList());
   }
 

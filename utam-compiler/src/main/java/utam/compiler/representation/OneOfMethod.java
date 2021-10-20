@@ -36,7 +36,6 @@ public class OneOfMethod implements PageObjectMethod {
       PrimitiveType.STRING));
   private final String methodName;
   private final TypeProvider returnType;
-  private final List<TypeProvider> classImports = new ArrayList<>();
   private final List<String> codeLines = new ArrayList<>();
 
   public OneOfMethod(
@@ -45,7 +44,6 @@ public class OneOfMethod implements PageObjectMethod {
       UnionType returnType) {
     this.methodName = getElementGetterMethodName(elementName, true);
     this.returnType = returnType;
-    this.classImports.add(returnType);
     setCodeLines(elements);
   }
 
@@ -94,7 +92,7 @@ public class OneOfMethod implements PageObjectMethod {
 
   @Override
   public List<TypeProvider> getClassImports() {
-    return classImports;
+    return new ArrayList<>();
   }
 
   @Override

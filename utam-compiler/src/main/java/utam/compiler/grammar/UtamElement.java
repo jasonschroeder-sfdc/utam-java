@@ -97,7 +97,7 @@ public final class UtamElement {
     this.filter = filter;
     this.isNullable = isNullable;
     this.isExternal = isExternal;
-    this.traversalAbstraction = UtamElementOneOf.buildTraversal(oneOf, name);
+    this.traversalAbstraction = UtamElementOneOf.buildTraversal(oneOf, name, selector);
   }
 
   UtamElement(
