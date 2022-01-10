@@ -1,0 +1,69 @@
+{
+  "elements": [
+    {
+      "name": "test",
+      "type": [
+        "editable"
+      ],
+      "selector": {
+        "css": "css"
+      }
+    }
+  ],
+  "methods": [
+    {
+      "name": "testPress",
+      "compose": [
+        {
+          "element": "test",
+          "apply": "press",
+          "args": [
+            {
+              "type": "string",
+              "name": "pressArg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "testSetText",
+      "compose": [
+        {
+          "element": "test",
+          "apply": "setText",
+          "args": [
+            {
+              "type": "string",
+              "name": "stringArg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "testClear",
+      "compose": [
+        {
+          "element": "test",
+          "apply": "clear"
+        }
+      ]
+    },
+    {
+      "name": "testClearAndType",
+      "compose": [
+        {
+          "element": "test",
+          "apply": "clearAndType",
+          "args": [
+            {
+              "type": "string",
+              "name": "strArg"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
